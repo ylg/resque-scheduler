@@ -97,6 +97,7 @@ module Resque
             if item = Resque.next_item_for_timestamp(timestamp)
               log "queuing #{item['class']} [delayed]"
               queue = item['queue'] || Resque.queue_from_class(constantize(item['class']))
+              queue = queue['s'].to_sym if queue.is_a?(Hash) && queue['json_class'] == 'Symbol'
               Job.create(queue, item['class'], *item['args'])
             end
           end
